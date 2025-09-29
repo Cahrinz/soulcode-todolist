@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List da Rita</title>
+</head>
+<body class="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-pink-600 dark:text-pink-400 mb-2">
+        To-Do List da Rita 🌸
+      </h1>
+      <div class="flex justify-center items-center space-x-4 text-gray-600 dark:text-gray-300">
+        <div id="digital-clock" class="text-lg font-mono bg-white dark:bg-gray-700 px-3 py-1 rounded-full shadow">
+          --:--:--
+        </div>
+        <button id="theme-toggle" class="p-2 rounded-full bg-white dark:bg-gray-700 shadow hover:shadow-md transition-all">
+          <span class="text-xl">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <div class="flex gap-3">
+        <button id="new-task-btn" class="btn-primary">
+          ✨ Nova Tarefa
+        </button>
+        <a href="pomodoro-simples.html" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105 inline-flex items-center">
+          🍅 Pomodoro
+        </a>
+      </div>
+      <div id="filter-controls"></div>
+    </div>
+
+    <!-- Tasks Container -->
+    <div id="task-container" class="space-y-4">
+      <!-- Tasks will be rendered here -->
+    </div>
+  </div>
+
+  <!-- Modal Container -->
+  <div id="modal-container"></div>
+  
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

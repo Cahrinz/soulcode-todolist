@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro da Rita 🍅</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    body.dark {
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+      color: white;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-pink { background: #ec4899; color: white; }
+    .btn-pink:hover { background: #db2777; transform: scale(1.05); }
+    
+    .btn-gray { background: #6b7280; color: white; }
+    .btn-gray:hover { background: #4b5563; }
+    
+    .btn-red { background: #ef4444; color: white; }
+    .btn-red:hover { background: #dc2626; }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    body.dark .card {
+      background: #374151;
+    }
+    
+    .timer-display {
+      font-size: 4rem;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .mode-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    
+    .mode-work { background: #fce7f3; color: #be185d; }
+    .mode-break { background: #dcfce7; color: #166534; }
+    .mode-long { background: #dbeafe; color: #1d4ed8; }
+    
+    body.dark .mode-work { background: #831843; color: #f9a8d4; }
+    body.dark .mode-break { background: #14532d; color: #86efac; }
+    body.dark .mode-long { background: #1e3a8a; color: #93c5fd; }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #ec4899;
+      width: 0%;
+      transition: width 1s ease;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #ec4899;
+    }
+    
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    
+    body.dark .input-group input {
+      background: #4b5563;
+      border-color: #6b7280;
+      color: white;
+    }
+    
+    .theme-toggle {
+      background: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    body.dark .theme-toggle {
+      background: #374151;
+    }
+    
+    h1 { color: #ec4899; font-size: 2.5rem; margin-bottom: 10px; }
+    h3 { margin-bottom: 20px; text-align: center; }
+    
+    body.dark h1 { color: #f9a8d4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <div class="nav">
+      <a href="index.html" class="btn btn-pink">← 📝 To-Do List</a>
+      <button class="theme-toggle" id="theme-toggle">🌙</button>
+    </div>
+    
+    <!-- Header -->
+    <div class="header">
+      <h1>Pomodoro da Rita 🍅🌸</h1>
+      <p>Técnica Pomodoro para aumentar sua produtividade</p>
+    </div>
+    
+    <!-- Timer -->
+    <div class="card">
+      <div style="text-align: center;">
+        <div id="mode-display">
+          <span class="mode-badge mode-work">🍅 Foco</span>
+        </div>
+        
+        <div class="timer-display" id="timer-display">25:00</div>
+        
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        
+        <div class="controls">
+          <button class="btn btn-pink" id="start-btn">▶️ Iniciar</button>
+          <button class="btn btn-gray" id="pause-btn" disabled>⏸️ Pausar</button>
+          <button class="btn btn-red" id="reset-btn">🔄 Reset</button>
+        </div>
+      </div>
+    </div>   
+ <!-- Stats -->
+    <div class="card">
+      <h3>📊 Estatísticas</h3>
+      <div class="stats">
+        <div>
+          <div class="stat-number" id="pomodoros-count">0</div>
+          <div>Pomodoros</div>
+        </div>
+        <div>
+          <div class="stat-number" id="breaks-count" style="color: #10b981;">0</div>
+          <div>Pausas</div>
+        </div>
+        <div>
+          <div class="stat-number" id="total-time" style="color: #3b82f6;">0h</div>
+          <div>Tempo Total</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings -->
+    <div class="card">
+      <h3>⚙️ Configurações</h3>
+      <div class="settings">
+        <div class="input-group">
+          <label>🍅 Foco (min)</label>
+          <input type="number" id="work-time" value="25" min="1" max="60">
+        </div>
+        <div class="input-group">
+          <label>☕ Pausa (min)</label>
+          <input type="number" id="break-time" value="5" min="1" max="30">
+        </div>
+        <div class="input-group">
+          <label>🛌 Pausa Longa (min)</label>
+          <input type="number" id="long-break-time" value="15" min="1" max="60">
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 20px;">
+        <label style="cursor: pointer;">
+          <input type="checkbox" id="sound-enabled" checked style="margin-right: 8px;">
+          🔔 Som de notificação
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class PomodoroTimer {
+      constructor() {
+        this.isRunning = false
+        this.currentMode = 'work'
+        this.timeLeft = 25 * 60
+        this.totalTime = 25 * 60
+        this.pomodoroCount = 0
+        this.breakCount = 0
+        this.totalMinutes = 0
+        this.timer = null
+        
+        this.init()
+      }
+
+      init() {
+        this.initElements()
+        this.initEventListeners()
+        this.loadStats()
+        this.applyTheme()
+        this.updateDisplay()
+      }
+
+      initElements() {
+        this.timerDisplay = document.getElementById('timer-display')
+        this.modeDisplay = document.getElementById('mode-display')
+        this.progressBar = document.getElementById('progress-bar')
+        this.startBtn = document.getElementById('start-btn')
+        this.pauseBtn = document.getElementById('pause-btn')
+        this.resetBtn = document.getElementById('reset-btn')
+        this.pomodorosCountEl = document.getElementById('pomodoros-count')
+        this.breaksCountEl = document.getElementById('breaks-count')
+        this.totalTimeEl = document.getElementById('total-time')
+        this.workTimeInput = document.getElementById('work-time')
+        this.breakTimeInput = document.getElementById('break-time')
+        this.longBreakTimeInput = document.getElementById('long-break-time')
+        this.soundEnabledInput = document.getElementById('sound-enabled')
+        this.themeToggle = document.getElementById('theme-toggle')
+      }
+
+      initEventListeners() {
+        this.startBtn.addEventListener('click', () => this.start())
+        this.pauseBtn.addEventListener('click', () => this.pause())
+        this.resetBtn.addEventListener('click', () => this.reset())
+        this.themeToggle.addEventListener('click', () => this.toggleTheme())
+        
+        this.workTimeInput.addEventListener('change', () => this.updateTimer())
+        this.breakTimeInput.addEventListener('change', () => this.updateTimer())
+        this.longBreakTimeInput.addEventListener('change', () => this.updateTimer())
+      }
+
+      start() {
+        this.isRunning = true
+        this.startBtn.disabled = true
+        this.pauseBtn.disabled = false
+        this.startBtn.textContent = '⏳ Rodando...'
+        
+        this.timer = setInterval(() => {
+          this.timeLeft--
+          this.updateDisplay()
+          this.updateProgress()
+          
+          if (this.timeLeft <= 0) {
+            this.complete()
+          }
+        }, 1000)
+      }
+
+      pause() {
+        this.isRunning = false
+        this.startBtn.disabled = false
+        this.pauseBtn.disabled = true
+        this.startBtn.textContent = '▶️ Continuar'
+        clearInterval(this.timer)
+      }
+
+      reset() {
+        this.isRunning = false
+        this.startBtn.disabled = false
+        this.pauseBtn.disabled = true
+        this.startBtn.textContent = '▶️ Iniciar'
+        clearInterval(this.timer)
+        this.updateTimer()
+        this.progressBar.style.width = '0%'
+      }  
+    complete() {
+        this.isRunning = false
+        this.startBtn.disabled = false
+        this.pauseBtn.disabled = true
+        this.startBtn.textContent = '▶️ Iniciar'
+        clearInterval(this.timer)
+        
+        if (this.currentMode === 'work') {
+          this.pomodoroCount++
+          this.totalMinutes += parseInt(this.workTimeInput.value)
+          
+          if (this.pomodoroCount % 4 === 0) {
+            this.currentMode = 'longBreak'
+            this.timeLeft = parseInt(this.longBreakTimeInput.value) * 60
+          } else {
+            this.currentMode = 'break'
+            this.timeLeft = parseInt(this.breakTimeInput.value) * 60
+          }
+        } else {
+          this.breakCount++
+          this.currentMode = 'work'
+          this.timeLeft = parseInt(this.workTimeInput.value) * 60
+        }
+        
+        this.totalTime = this.timeLeft
+        this.updateDisplay()
+        this.updateStats()
+        this.saveStats()
+        this.playNotification()
+        this.progressBar.style.width = '0%'
+      }
+
+      updateTimer() {
+        if (!this.isRunning) {
+          if (this.currentMode === 'work') {
+            this.timeLeft = parseInt(this.workTimeInput.value) * 60
+          } else if (this.currentMode === 'break') {
+            this.timeLeft = parseInt(this.breakTimeInput.value) * 60
+          } else {
+            this.timeLeft = parseInt(this.longBreakTimeInput.value) * 60
+          }
+          this.totalTime = this.timeLeft
+          this.updateDisplay()
+        }
+      }
+
+      updateDisplay() {
+        const minutes = Math.floor(this.timeLeft / 60)
+        const seconds = this.timeLeft % 60
+        this.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        
+        // Update mode display
+        if (this.currentMode === 'work') {
+          this.modeDisplay.innerHTML = '<span class="mode-badge mode-work">🍅 Foco</span>'
+        } else if (this.currentMode === 'break') {
+          this.modeDisplay.innerHTML = '<span class="mode-badge mode-break">☕ Pausa</span>'
+        } else {
+          this.modeDisplay.innerHTML = '<span class="mode-badge mode-long">🛌 Pausa Longa</span>'
+        }
+        
+        // Update page title
+        const modeText = this.currentMode === 'work' ? 'Foco' : (this.currentMode === 'break' ? 'Pausa' : 'Pausa Longa')
+        document.title = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} - ${modeText} | Pomodoro da Rita`
+      }
+
+      updateProgress() {
+        const progress = ((this.totalTime - this.timeLeft) / this.totalTime) * 100
+        this.progressBar.style.width = `${progress}%`
+      }
+
+      updateStats() {
+        this.pomodorosCountEl.textContent = this.pomodoroCount
+        this.breaksCountEl.textContent = this.breakCount
+        const hours = Math.floor(this.totalMinutes / 60)
+        const minutes = this.totalMinutes % 60
+        this.totalTimeEl.textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`
+      }
+
+      saveStats() {
+        localStorage.setItem('pomodoro-stats', JSON.stringify({
+          pomodoroCount: this.pomodoroCount,
+          breakCount: this.breakCount,
+          totalMinutes: this.totalMinutes
+        }))
+      }
+
+      loadStats() {
+        const stats = JSON.parse(localStorage.getItem('pomodoro-stats') || '{}')
+        this.pomodoroCount = stats.pomodoroCount || 0
+        this.breakCount = stats.breakCount || 0
+        this.totalMinutes = stats.totalMinutes || 0
+        this.updateStats()
+      }
+
+      playNotification() {
+        if (this.soundEnabledInput.checked) {
+          // Simple beep
+          const beep = () => {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+            const oscillator = audioContext.createOscillator()
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
+            oscillator.connect(audioContext.destination)
+            oscillator.start()
+            oscillator.stop(audioContext.currentTime + 0.2)
+          }
+          try { beep() } catch(e) { console.log('Audio not supported') }
+        }
+        
+        // Browser notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const modeText = this.currentMode === 'work' ? 'Hora de trabalhar! 🍅' : 'Hora da pausa! ☕'
+          new Notification('Pomodoro da Rita', { body: modeText })
+        }
+      }
+
+      toggleTheme() {
+        const isDark = document.body.classList.contains('dark')
+        if (isDark) {
+          document.body.classList.remove('dark')
+          localStorage.setItem('pomodoro-theme', 'light')
+          this.themeToggle.textContent = '🌙'
+        } else {
+          document.body.classList.add('dark')
+          localStorage.setItem('pomodoro-theme', 'dark')
+          this.themeToggle.textContent = '☀️'
+        }
+      }
+
+      applyTheme() {
+        const savedTheme = localStorage.getItem('pomodoro-theme') || 'light'
+        if (savedTheme === 'dark') {
+          document.body.classList.add('dark')
+          this.themeToggle.textContent = '☀️'
+        } else {
+          this.themeToggle.textContent = '🌙'
+        }
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      new PomodoroTimer()
+      
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission()
+      }
+    })
+  </script>
+</body>
+</html>

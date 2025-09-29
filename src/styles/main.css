@@ -1,0 +1,62 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-primary {
+    @apply bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-lg font-medium transition-all;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition-all;
+  }
+
+  .btn-success {
+    @apply bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-all;
+  }
+
+  .task-card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all p-6 border border-gray-100 dark:border-gray-700;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2;
+  }
+
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .status-completed {
+    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .filter-active {
+    @apply bg-pink-500 text-white px-4 py-2 rounded-full shadow-md;
+  }
+
+  .filter-inactive {
+    @apply bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full shadow transition-all;
+  }
+
+  .empty-state {
+    @apply text-center py-12 text-gray-500 dark:text-gray-400;
+  }
+}
